@@ -1,7 +1,7 @@
 import Button from "./Button/Button";
 import Loader from "./Loader/Loader";
 import SearchBar from "./SearchBar";
-import { Component } from "react";
+import React, { Component } from "react";
 import axios from "axios";
 import ImageGallery from "./ImageGallery";
 import Modal from './Modal';
@@ -24,6 +24,7 @@ class App extends Component {
     };
     this.getPhotos = this.getPhotos.bind(this);
     this.handleModalClose = this.handleModalClose.bind(this);
+    this.loadMoreImages = this.loadMoreImages.bind(this);
   }
 
   async getPhotos(query) {
@@ -40,7 +41,21 @@ class App extends Component {
       this.setState({ loading: false });
     }
   }
-
+  async loadMoreImages(event) {
+    event.preventDefault();
+    try {
+      this.setState({ loading: true });
+      const { images, per_page, query } = this.state;
+      const nextPage = Math.ceil(images.length / per_page) + 1;
+      const response = await axios.get(
+        `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${query}&image_type=photo&orientation=horizontal&per_page=${per_page}&page=${nextPage}`
+      );
+      this.setState(prevState => ({ images: [...prevState.images, ...response.data.hits], loading: false }));
+    } catch (error) {
+      console.error('Error loading more images:', error);
+      this.setState({ loading: false, error: 'Error loading more images' });
+    }
+}
   handleModal = imageUrl => {
     this.setState({
       showModal: true,
@@ -69,10 +84,17 @@ class App extends Component {
             handleClick={this.handleModal}
           ></ImageGallery>
         )}
-        {showModal && (
-          <Modal imageUrl= {selectedImage} onClose={this.handleModalClose} />
+        {!error && !loading && images.length > 0 && (
+          <Button
+            type={'button'}
+            text={'Load More'}
+            onClick={this.loadMoreImages}
+          ></Button>
         )}
-        <Button></Button>
+
+        {showModal && (
+          <Modal imageUrl={selectedImage} onClose={this.handleModalClose} />
+        )}
       </div>
     );
   }
