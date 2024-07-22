@@ -1,20 +1,37 @@
-import React, { Component } from "react";
-import styles from './Modal.module.css';
+import { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import * as basicLightbox from 'basiclightbox';
-export default class Modal extends Component {
-    constructor(props) {
-        super(props);
-    }
+import 'basiclightbox/dist/basicLightbox.min.css';
 
-    
-    render() {
-        const { image } = this.props;
-        return (
-          <div className={styles.Overlay}>
-            <dialog claddName={styles.Modal}>
-              <img src={image.largeImageURL} alt="" width = "800" height="600"/>
-            </dialog>
-          </div>
-        );
-    }
-}
+const Modal = ({ imageUrl, onClose }) => {
+  useEffect(() => {
+    const instance = basicLightbox.create(`
+      <img src=${imageUrl} width="800" height="600">
+    `);
+
+    instance.show();
+
+    const handleEscape = event => {
+      if (event.key === 'Escape') {
+        instance.close();
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+
+    return () => {
+      window.removeEventListener('keydown', handleEscape);
+      instance.close();
+    };
+  }, [imageUrl, onClose]);
+
+  return null;
+};
+
+Modal.propTypes = {
+  imageUrl: PropTypes.string.isRequired,
+  onClose: PropTypes.func.isRequired,
+};
+
+export default Modal;
