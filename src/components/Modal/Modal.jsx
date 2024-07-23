@@ -5,9 +5,7 @@ import 'basiclightbox/dist/basicLightbox.min.css';
 
 const Modal = ({ imageUrl, onClose }) => {
   useEffect(() => {
-    console.log('Modal imageUrl:', imageUrl, typeof imageUrl);
-
-    const instance = basicLightbox.create(`
+      const instance = basicLightbox.create(`
       <img src="${imageUrl}" width="800" height="600">
     `);
 
