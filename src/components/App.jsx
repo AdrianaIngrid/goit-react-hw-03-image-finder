@@ -1,14 +1,13 @@
-import Button from "./Button/Button";
-import Loader from "./Loader/Loader";
-import SearchBar from "./SearchBar";
-import React, { Component } from "react";
-import axios from "axios";
-import ImageGallery from "./ImageGallery";
+import Button from './Button/Button';
+import Loader from './Loader/Loader';
+import SearchBar from './SearchBar';
+import React, { Component } from 'react';
+import axios from 'axios';
+import ImageGallery from './ImageGallery';
 import Modal from './Modal';
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 const PIXABAY_API_KEY = '44045744-87391f93bf3caee56476bbdd7';
 const INITIAL_PER_PAGE = 12;
-
 
 class App extends Component {
   constructor(props) {
@@ -50,12 +49,15 @@ class App extends Component {
       const response = await axios.get(
         `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${query}&image_type=photo&orientation=horizontal&per_page=${per_page}&page=${nextPage}`
       );
-      this.setState(prevState => ({ images: [...prevState.images, ...response.data.hits], loading: false }));
+      this.setState(prevState => ({
+        images: [...prevState.images, ...response.data.hits],
+        loading: false,
+      }));
     } catch (error) {
       console.error('Error loading more images:', error);
       this.setState({ loading: false, error: 'Error loading more images' });
     }
-}
+  }
   handleModal = imageUrl => {
     this.setState({
       showModal: true,
@@ -81,7 +83,7 @@ class App extends Component {
         ) : (
           <ImageGallery
             images={images}
-            handleModal={this.props.handleModal}
+            handleModal={this.handleModal}
           ></ImageGallery>
         )}
         {!error && !loading && images.length > 0 && (
@@ -93,13 +95,10 @@ class App extends Component {
         )}
 
         {showModal && (
-          <Modal
-            imageUrl={selectedImage}
-            onClose={this.props.handleModalClose}
-          />
+          <Modal imageUrl={selectedImage} onClose={this.handleModalClose} />
         )}
       </div>
     );
   }
-};
+}
 export default App;
