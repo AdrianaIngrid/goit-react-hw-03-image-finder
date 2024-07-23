@@ -81,7 +81,7 @@ class App extends Component {
         ) : (
           <ImageGallery
             images={images}
-            handleClick={this.handleModal}
+            handleModal={this.props.handleModal}
           ></ImageGallery>
         )}
         {!error && !loading && images.length > 0 && (
@@ -93,7 +93,10 @@ class App extends Component {
         )}
 
         {showModal && (
-          <Modal imageUrl={selectedImage} onClose={this.handleModalClose} />
+          <Modal
+            imageUrl={selectedImage}
+            onClose={this.props.handleModalClose}
+          />
         )}
       </div>
     );
